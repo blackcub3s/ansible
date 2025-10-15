@@ -150,7 +150,8 @@ Para entender a lo que nos referimos podemos ver esta imagen que demuestra la ut
 
 # 3. Instalación de Ansible
 
-Ahora que ya tenemos SSH bien configurado sin que pida contraseñas manualmente y podemos instalar ansible (después de actualizar la lista de paquetes -update- y actualizar aquellos para los que se puede obtener una versión más reciente -upgrade-)
+Ahora que ya tenemos SSH bien configurado sin que pida contraseñas manualmente y podemos instalar ansible (después de actualizar la lista de paquetes -update- y actualizar aquellos para los que se puede obtener una versión más reciente -upgrade-):
+
 
 ``` 
 sudo apt update
@@ -175,24 +176,54 @@ Este archivo .ini o .yaml estará en el equipo donde esté instalado ansible, qu
 
 # 4.1. Estructura básica del proyecto (ejemplo sencillo)
 
-La estructura del proyecto que hemos hecho aquí a correr con ansible en WSL para automatizar una instalacion mediante apt en los dos "servidores" o "managed nodes" es la siguiente:
+La estructura del proyecto que hemos hecho aquí a correr con ansible en WSL para automatizar una instalacion de un editor de código "kate" mediante apt en los dos "servidores" o "managed nodes".
+
+Lo que sigue es una estructura básica para cualquier proyecto ansible:
 
 
-- El **inventario**: nos define las IPs de los "managed nodes" y los GRUPOS a los que pertenecen estos "managed nodes" (tambien denominados "hosts"). En nuestro caso tenemos [inventarioHosts.ini](/proyectoAnsible/inventarioHosts.ini).
+- El **inventario**: nos define las IPs de los "managed nodes" y los GRUPOS a los que pertenecen estos "managed nodes" (tambien denominados "hosts"). En este caso particular tenemos [inventarioHosts.ini](/proyectoAnsible/inventarioHosts.ini) donde añadimos las IPs de los hosts en nuestra red.
 
 
-- El **playbook**: nos define en "hosts" aquel grupo de hosts a cuyos integrantes haremos las instalaciones automáticamente (véase nuestro [automatitzaInstalacions.yaml](/proyectoAnsible/automatitzaInstalacions.yaml)). Por ejemplo con el comando apt y con el valor de "state" en "apt" podemos cambiar la naturaleza de la automatización de la instalación:
+- El **playbook**: nos define en "hosts" aquel grupo de hosts a cuyos integrantes haremos las instalaciones automáticamente (véase nuestro [automatitzaInstalacions.yaml](/proyectoAnsible/automatitzaInstalacions.yaml)). 
 
-    - *present*: Si y solo si no está instalado, lo instala.
-    - *absent*:	Desinstala el paquete.
-    - *latest*:	Instala la versión más reciente disponible
-    - *reinstalled*: Reinstala el paquete aunque ya esté instalado.
+Este playbook hará 
+
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install kate
+```
+
+Y su código es como sigue:
+
+**TO DO: POSA CODI**
+
+NOTA: Mención expresa merece el uso de "state". Puede tomar cuatro valores distintos que harán que el comportamiento de la instalación con apt sea distinto. A saber:
+
+    - present:      Si ya está instalado no hace nada; si no lo está, lo instala (si algo funciona no lo toques: que es el que hemos usado aquí)
+    - absent:	Desinstala el paquete.
+    - latest:	Instala la versión más reciente disponible
+    - reinstalled:  Reinstala el paquete aunque ya esté instalado.
 
 
 # 4.2. Ejecutar el playbook de ansible
 
+Antes de su ejecución vemos que en las máquinas virtuales kate no está instalado:
 
-TO DO
+![alt text](./img/preAnsible.png)
+
+Ahora ejecutamos el playbook:
+
+```
+cd proyectoAnsible
+ansible-playbook -i inventarioHosts.ini automatitzaInstalacions.yml
+```
+
+
+
+
+
+
 
 
 

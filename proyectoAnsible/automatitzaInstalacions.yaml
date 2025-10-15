@@ -1,4 +1,4 @@
-- name: Actualizar sistema e instalar Kate
+- name: Actualizar sistema e instalar editor Kate
   hosts: nodesLinuxMint
   become: yes # instalo con sudo (superusuario)
   tasks:
