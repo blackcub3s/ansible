@@ -224,7 +224,7 @@ NOTA: Mención expresa merece el uso de "state". Puede tomar cuatro valores dist
     - reinstalled:  Reinstala el paquete aunque ya esté instalado.
 
 
-# 4.2. Ejecutar el playbook de ansible
+# 4.2. Ejecutar el playbook
 
 Antes de su ejecución vemos que en las máquinas virtuales kate no está instalado:
 
@@ -237,11 +237,13 @@ cd proyectoAnsible
 ansible-playbook --inventory inventarioHosts.ini automatitzaInstalacions.yaml --ask-become-pass
 ```
 
+Al hacer esto por la terminal se indica la realización de cada una de las tareas, encabezada por los nombres (name) que les dimos en el playbook automatitzaInstalacion (las que salen en verder es porque ya estaban instaladas de pruebas previas y en amarillo es la que ha supuesto el cambio en la última ejecucion del último comando):
 
+![alt text](./img/sortidaAnsibleBis.png)
 
+Ahora si vamos a las máquinas virtuales veremos que ya tenemos los editores kate instalados de forma automática:
 
-
-
+![alt text](./img/imgInstalacioKate.png)
 
 
 
