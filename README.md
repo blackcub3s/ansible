@@ -181,17 +181,30 @@ Este archivo .ini o .yaml estará en el equipo donde esté instalado ansible, qu
 
 # 4.1. Estructura básica del proyecto (ejemplo sencillo)
 
-La estructura del proyecto que hemos hecho aquí a correr con ansible en WSL para automatizar una instalacion de un editor de código "kate" mediante apt en los dos "servidores" o "managed nodes".
+La estructura de un proyecto con ansible es esta:
 
-Lo que sigue es una estructura básica para cualquier proyecto ansible:
+```
+ansible_project/
+│
+├── archivoHosts   # archivo de inventario (.ini o .yaml)
+├── unPlayBook.yml # tu playbook
+└── roles/         # opcional: organizar tareas complejas
+```
+En este caso particular, el que correremos con ansible en WSL, nos pondremos un objetivo muy simple: automatizar una instalacion de un editor de código "kate" mediante apt en los dos "servidores" o "managed nodes".
+
+Este ejemplo podría darse si somos administradores de sistemas de todos los equipos linux de una universidad, por ejemplo. Si un profesor nos pide que en todos los ordenadores tiene que haber el editor kate, porque este es el editor con el que han programado todo el curso ir ordenador por ordenador sería un suplicio. Sin embargo, con Ansible, siempre que los ordenadores estén en la misma red, sería sencillo de hacer.
+
+Para ello hemos creado:
 
 
-- El **inventario**: nos define las IPs de los "managed nodes" y los GRUPOS a los que pertenecen estos "managed nodes" (tambien denominados "hosts"). En este caso particular tenemos [inventarioHosts.ini](/proyectoAnsible/inventarioHosts.ini) donde añadimos las IPs de los hosts en nuestra red.
+- El **inventario**: aquí definimos las IPs de los "managed nodes" y los GRUPOS a los que pertenecen estos "managed nodes" (tambien denominados "hosts"). En este caso particular tenemos [inventarioHosts.ini](/proyectoAnsible/inventarioHosts.ini) donde añadimos las IPs de los hosts en nuestra red en un grupo denominado `nodesLinuxMint`:
+
+https://github.com/blackcub3s/ansible/blob/8b982de246e5aa61fa4a384f89ed0b9e44024afd/proyectoAnsible/inventarioHosts.ini#L1-L10
 
 
-- El **playbook**: nos define en "hosts" aquel grupo de hosts a cuyos integrantes haremos las instalaciones automáticamente (véase nuestro [automatitzaInstalacions.yaml](/proyectoAnsible/automatitzaInstalacions.yaml)). 
+- El **playbook**: nos define las tareas que vamos a hacer con los equipos o servidores que hemos definido en el archivo del inventario o de los hosts (véase nuestro [automatitzaInstalacions.yaml](/proyectoAnsible/automatitzaInstalacions.yaml)). 
 
-Este playbook hará 
+Este playbook en concreto hará tres cosas, por orden:
 
 ```
 sudo apt update
@@ -217,7 +230,7 @@ Antes de su ejecución vemos que en las máquinas virtuales kate no está instal
 
 ![alt text](./img/preAnsible.png)
 
-Ahora ejecutamos el playbook. Citamos la flag --inventory para que no tome le archivo de hosts de la carpeta por defecto, luego el nombre del playbook y MUY IMPORTANTE necesitamos definir la flag --ask-become-pass para que nos pida el password de superusuario de los equipors (al definir ```become: yes``` DENTRO del playbook le estamos pidiendo de usar sudo, y sudo tiene su propia contraseña en cada equipo).
+Ahora ejecutamos el playbook. Para hacerlo tenemos el comando `ansible-playbook` y le pasaremos la flag `--inventory` para que no mire el archivo de los hosts de la carpeta por defecto (`/etc/), luego el nombre del playbook y MUY IMPORTANTE necesitamos definir la flag --ask-become-pass para que nos pida el password de superusuario de los equipors (al definir ```become: yes``` DENTRO del playbook le estamos pidiendo de usar sudo, y sudo tiene su propia contraseña en cada equipo).
 
 ```
 cd proyectoAnsible
