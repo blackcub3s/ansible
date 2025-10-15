@@ -134,14 +134,19 @@ Estos comando copian este contenido hacia el interior de cada servidor ```/home/
 
 # 2.5. Tomar la contraseña de forma automática CADA VEZ que enciendo wsl:
 
-Para acceder con una sola contraseña a los dos servidores y no tener que hacer nada más usaremos **ssh-agent**: para CADA USO de WSL tenemos que correr este comando. 
+Para acceder con una sola contraseña a los dos servidores y no tener que hacer nada en teoria podemos usare **ssh-agent**: para CADA USO de WSL tenemos que correr este comando. 
 ```
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 ```
-Si lo hacemos no habrá que poner ninguna contraseña al conectarse al WSL. Esto habrá que hacerlo cada vez y con ello ya podremos automaitzar ssh a través de ansible y hacer configuraciones en todos los servidores de golpe.
+Si lo hacemos tecnicamente no habrá que poner ninguna contraseña al conectarse al WSL. Así es con ssh manualemnte, pero ansible no lo permite. 
 
-Para entender a lo que nos referimos podemos ver esta imagen que demuestra la utilidad de usar ssh-agent cada vez que iniciamos el wsl:
+Para que ansible tome la clave privada el truco es usar el parámetro que comentamos antes ansible_ssh_private_key_file y definir ahí la ruta donde se encuentra la clave privada dentro del WSL. Todo ello en inventarioHosts.ini:
+
+```
+ansible_ssh_private_key_file=/home/blackcub3s/.ssh/id_ed25519
+```
+Para entender a lo que nos referimos con automatizar el uso de la clave privada ponemos esta imagen que demuestra la utilidad de usar ssh-agent cada vez que iniciamos el wsl, porque nos permite no poner contraseñas constantemente al usar ssh. En teoría debería transferir a ansible, pero no es el caso (de ahi que usemos ansible_ssh_private_key_file).
 
 ![alt text](/img/imageResumSshAgent.png)
 
@@ -216,7 +221,7 @@ Ahora ejecutamos el playbook:
 
 ```
 cd proyectoAnsible
-ansible-playbook -i inventarioHosts.ini automatitzaInstalacions.yml
+ansible-playbook --inventory inventarioHosts.ini automatitzaInstalacions.yaml
 ```
 
 
