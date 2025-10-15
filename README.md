@@ -214,7 +214,7 @@ sudo apt install kate
 
 Y su código es como sigue:
 
-**TO DO: POSA CODI**
+https://github.com/blackcub3s/ansible/blob/8b982de246e5aa61fa4a384f89ed0b9e44024afd/proyectoAnsible/automatitzaInstalacions.yaml#L1-L17
 
 NOTA: Mención expresa merece el uso de "state". Puede tomar cuatro valores distintos que harán que el comportamiento de la instalación con apt sea distinto. A saber:
 
