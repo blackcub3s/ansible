@@ -128,20 +128,20 @@ ssh-copy-id blackcub3s@192.168.56.101
 ssh-copy-id blackcub3s@192.168.56.102
 ```
 
-Estos comando copian este contenido hacia el interior de cada servidor ```/home/blackcub3s/.ssh/authorized_keys```. Authoried_keys es un archivo que crea y añade dentro lac ontraseña.  
+Estos comando copian este contenido hacia el interior de cada servidor en la ruta ```/home/blackcub3s/.ssh/authorized_keys```. `Authorized_keys` es un archivo que se crea con este comando, si no existe, y en su interior se añade mediante el mismo la clave pública que emana de la clave privada que tenemos en el wsl (puede que añada varias claves públicas si se repite el comando, no es idempotente cuidado: repetiríamos líneas).  
 
 ![alt text](./img/sshCopyId.png)
 
-# 2.5. Tomar la contraseña de forma automática CADA VEZ que enciendo wsl:
+# 2.5. Tomar la contraseña de forma automática CADA VEZ que encendemos el wsl:
 
-Para acceder con una sola contraseña a los dos servidores y no tener que hacer nada en teoria podemos usare **ssh-agent**: para CADA USO de WSL tenemos que correr este comando. 
+Para acceder con una sola contraseña a los dos servidores y no tener que hacer nada, en teoría podemos usar **ssh-agent**: para CADA USO de WSL tenemos que correr este comando. 
 ```
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 ```
-Si lo hacemos tecnicamente no habrá que poner ninguna contraseña al conectarse al WSL. Así es con ssh manualemnte, pero ansible no lo permite. 
+Si lo hacemos tecnicamente no habrá que poner ninguna contraseña al conectarse al WSL. Así es con ssh manualmente.
 
-Para que ansible tome la clave privada el truco es usar el parámetro que comentamos antes ansible_ssh_private_key_file y definir ahí la ruta donde se encuentra la clave privada dentro del WSL. Todo ello en inventarioHosts.ini:
+Sin embargo, para que ansible tome la clave privada sin tener que hacer este paso el truco es usar el parámetro que comentamos antes `ansible_ssh_private_key_file` y definir ahí la ruta donde se encuentra la clave privada dentro del WSL. Este parámetro lo escribiremos dentro de `inventarioHosts.ini` escribiendo la [ésta línea](https://github.com/blackcub3s/ansible/blob/8b982de246e5aa61fa4a384f89ed0b9e44024afd/proyectoAnsible/inventarioHosts.ini#L10):
 
 ```
 ansible_ssh_private_key_file=/home/blackcub3s/.ssh/id_ed25519
@@ -150,7 +150,7 @@ Para entender a lo que nos referimos con automatizar el uso de la clave privada 
 
 ![alt text](/img/imageResumSshAgent.png)
 
-> **NOTA**: Si no queremos usar ssh-agent cada vez que iniciamos podemos guardar la clave privada y pasarla por
+> **NOTA**: Si no queremos usar `ssh-agent` cada vez que iniciamos podemos guardar la clave privada y pasarla por
 `ansible_ssh_private_key_file` como vemos en la documentación [^2].
 
 # 3. Instalación de Ansible
@@ -158,26 +158,27 @@ Para entender a lo que nos referimos con automatizar el uso de la clave privada 
 Ahora que ya tenemos SSH bien configurado sin que pida contraseñas manualmente y podemos instalar ansible (después de actualizar la lista de paquetes -update- y actualizar aquellos para los que se puede obtener una versión más reciente -upgrade-):
 
 
-``` 
+```
 sudo apt update
 sudo apt upgrade -y
 sudo apt install ansible -y
 ```
 
-Hecho esto verificamos que ansible está instalado con
+Hecho esto verificamos que ansible está instalado con:
+
 ```
 ansible --version
 ```
 
 # 4. Uso de Ansible
 
-Ahora vamos a usar Ansible para un ejemplo muy sencillo: automatizar la instalación de un editor de código en ambas maquinas virtuales. El editor no está instakado en ellas: es el editor kate.
+Ahora vamos a usar Ansible para un ejemplo muy sencillo: automatizar la instalación de un editor de código en ambas maquinas virtuales. El editor no está instalado en ellas: es el editor kate.
 
-Como vemos en la documentación oficial [^2], para hacerlo hay que crear un **archivo de inventario** donde definiremos cuáles serán los "managed nodes" que automatizaremos, por un lado; y las variables asociadas a estos "managed nodes", por el otro. 
+Como vemos en la documentación oficial [^2], para hacerlo, hay que crear un **archivo de inventario** donde definiremos cuáles serán los "managed nodes" que automatizaremos, por un lado; y las variables asociadas a estos "managed nodes", por el otro.
 
-Esto se puede hacer con un archivo .ini, muy visual y más idóneo para configuraciones sencillas; o un .yaml, que es más complejo pero es el más moderno porque también es más flexible.
+Esto se puede hacer con un archivo .ini, muy visual y más idóneo para configuraciones sencillas; o un .yaml, que es más complejo pero más moderno y flexible para cuando los proyectos crecen.
 
-Este archivo .ini o .yaml estará en el equipo donde esté instalado ansible, que ser á el "control node"; en nuestro caso el wsl para winows.
+Este archivo `.ini` o `.yaml` estará en el equipo donde esté instalado ansible, que será el "control node"; en nuestro caso el wsl para Windows.
 
 # 4.1. Estructura básica del proyecto (ejemplo sencillo)
 
@@ -185,12 +186,11 @@ La estructura de un proyecto con ansible es esta:
 
 ```
 ansible_project/
-│
-├── archivoHosts   # archivo de inventario (.ini o .yaml)
-├── unPlayBook.yml # tu playbook
-└── roles/         # opcional: organizar tareas complejas
+ ├── archivoHosts   # archivo de inventario (.ini o .yaml)
+ ├── unPlayBook.yml # tu playbook
+ └── roles/         # opcional: organizar tareas complejas
 ```
-En este caso particular, el que correremos con ansible en WSL, nos pondremos un objetivo muy simple: automatizar una instalacion de un editor de código "kate" mediante apt en los dos "servidores" o "managed nodes".
+En este caso particular, el que correremos con ansible en WSL, nos pondremos un objetivo muy simple: **automatizar una instalación de un editor de código denominado "Kate" mediante el gestor de paquetes `apt` en los dos "servidores" o "managed nodes".
 
 Este ejemplo podría darse si somos administradores de sistemas de todos los equipos linux de una universidad, por ejemplo. Si un profesor nos pide que en todos los ordenadores tiene que haber el editor kate, porque este es el editor con el que han programado todo el curso ir ordenador por ordenador sería un suplicio. Sin embargo, con Ansible, siempre que los ordenadores estén en la misma red, sería sencillo de hacer.
 
