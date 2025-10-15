@@ -1,0 +1,17 @@
+- name: Actualizar sistema e instalar Kate
+  hosts: nodesLinuxMint
+  become: yes # instalo con sudo (superusuario)
+  tasks:
+    - name: Actualizar cache de paquetes #es como el apt update
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Actualizar todos los paquetes instalados # es como el apt upgrade
+      apt:
+        upgrade: dist
+
+    - name: Instalar Kate # hara basicamente apt install kate
+      apt:
+        name: kate
+        state: present # instala solo si no esta instalado. En caso contrario no hace nada.
