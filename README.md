@@ -217,11 +217,11 @@ Antes de su ejecución vemos que en las máquinas virtuales kate no está instal
 
 ![alt text](./img/preAnsible.png)
 
-Ahora ejecutamos el playbook:
+Ahora ejecutamos el playbook. Citamos la flag --inventory para que no tome le archivo de hosts de la carpeta por defecto, luego el nombre del playbook y MUY IMPORTANTE necesitamos definir la flag --ask-become-pass para que nos pida el password de superusuario de los equipors (al definir ```become: yes``` DENTRO del playbook le estamos pidiendo de usar sudo, y sudo tiene su propia contraseña en cada equipo).
 
 ```
 cd proyectoAnsible
-ansible-playbook --inventory inventarioHosts.ini automatitzaInstalacions.yaml
+ansible-playbook --inventory inventarioHosts.ini automatitzaInstalacions.yaml --ask-become-pass
 ```
 
 
